@@ -1,107 +1,119 @@
-const cardano = require("./cardano")
+const cardano = require("./cardano");
 
-// 1. Get the wallet
+const hexAssetName = (assetName) =>
+  assetName
+    .split("")
+    .map((c) => c.charCodeAt(0).toString(16).padStart(2, "0"))
+    .join("");
 
-const wallet = cardano.wallet("ADAPI")
+const assetId = (assetName, policyId) =>
+  policyId + "." + hexAssetName(assetName);
 
-// 2. Define mint script
+const makeMetadata = (policyId, assets) => ({
+  721: {
+    [policyId]: {
+      ...Object.fromEntries(assets.map((asset) => [asset.name, asset])),
+    },
+  },
+});
 
-const mintScript = {
-    keyHash: cardano.addressKeyHash(wallet.name),
-    type: "sig"
-}
+const makeTransaction = (wallet, policyId, assets, mintScript, metadata) => {
+  const txOuts = [
+    {
+      address: wallet.paymentAddr,
+      value: {
+        ...wallet.balance().value,
+        ...Object.fromEntries(
+          assets.map((asset) => [assetId(asset.name, policyId), 1])
+        ),
+      },
+    },
+  ];
 
-// 3. Create POLICY_ID
+  const mint = assets.map((asset) => ({
+    action: "mint",
+    quantity: 1,
+    asset: assetId(asset.name, policyId),
+    script: mintScript,
+  }));
 
-const POLICY_ID = cardano.transactionPolicyid(mintScript)
-
-// 4. Define ASSET_NAME
-
-const ASSET_NAME = "TimeWarpBerry"
-
-// Convert Asset ASCII name to HEX
-
-const ASSET_NAME_HEX = ASSET_NAME.split("").map(c => c.charCodeAt(0).toString(16).padStart(2, "0")).join("");
-
-
-// 5. Create ASSET_ID
-
-const ASSET_ID = POLICY_ID + "." + ASSET_NAME_HEX
-
-// 6. Define metadata
-
-const metadata = {
-    721: {
-        [POLICY_ID]: {
-            [ASSET_NAME]: {
-                name: ASSET_NAME,
-                image: "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
-                description: "Time Warp Berry NFT",
-                type: "image/png",
-                src: "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
-                // other properties of your choice
-                authors: ["PIADA", "SBLYR"]
-            }
-        }
-    }
-}
-
-// 7. Define transaction
-
-const tx = {
+  return {
     txIn: wallet.balance().utxo,
-    txOut: [
-        {
-            address: wallet.paymentAddr,
-            value: { ...wallet.balance().value, [ASSET_ID]: 1 }
-        }
-    ],
-    mint: [
-        { action: "mint", quantity: 1, asset: ASSET_ID, script: mintScript },
-      ],
+    txOut: txOuts,
+    mint: mint,
     metadata,
-    witnessCount: 2
-}
+    witnessCount: 2,
+  };
+};
 
+assets = [
+  {
+    name: "AssetName2",
+    image: "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
+    description: "NFT",
+    type: "image/png",
+    src: "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
+    authors: ["WingRiders"],
+  },
+  {
+    name: "AssetName3",
+    image: "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
+    description: "NFT",
+    type: "image/png",
+    src: "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
+    authors: ["WingRiders"],
+  },
+];
 
+const mintAssset = (walletName, assets) => {
+  const wallet = cardano.wallet(walletName);
 
-if(Object.keys(tx.txOut[0].value).includes("undefined")|| Object.keys(tx.txIn[0].value.includes("undefinded"))){
-    delete tx.txOut[0].value.undefined
-    delete tx.txIn[0].value.undefined
-}
+  const mintScript = {
+    keyHash: cardano.addressKeyHash(wallet.name),
+    type: "sig",
+  };
 
-// 8. Build transaction
+  const POLICY_ID = cardano.transactionPolicyid(mintScript);
+  const ASSET_ID = assetId(assets[0].name, POLICY_ID);
+  const metadata = makeMetadata(POLICY_ID, assets);
+  const tx = makeTransaction(wallet, POLICY_ID, assets, mintScript, metadata);
 
-const buildTransaction = (tx) => {
+  // What's that
+  if (
+    Object.keys(tx.txOut[0].value).includes("undefined") ||
+    Object.keys(tx.txIn[0].value.includes("undefinded"))
+  ) {
+    delete tx.txOut[0].value.undefined;
+    delete tx.txIn[0].value.undefined;
+  }
 
-    const raw = cardano.transactionBuildRaw(tx)
+  const buildTransaction = (tx) => {
+    const raw = cardano.transactionBuildRaw(tx);
     const fee = cardano.transactionCalculateMinFee({
-        ...tx,
-        txBody: raw
-    })
+      ...tx,
+      txBody: raw,
+    });
 
-    tx.txOut[0].value.lovelace -= fee
+    tx.txOut[0].value.lovelace -= fee;
 
-    return cardano.transactionBuildRaw({ ...tx, fee })
-}
+    return cardano.transactionBuildRaw({ ...tx, fee });
+  };
 
-console.log(tx)
-const raw = buildTransaction(tx)
+  console.log(tx);
+  const raw = buildTransaction(tx);
 
-// 9. Sign transaction
-
-const signTransaction = (wallet, tx) => {
-
+  const signTransaction = (wallet, tx) => {
     return cardano.transactionSign({
-        signingKeys: [wallet.payment.skey, wallet.payment.skey ],
-        txBody: tx
-    })
-}
+      signingKeys: [wallet.payment.skey, wallet.payment.skey],
+      txBody: tx,
+    });
+  };
 
-const signed = signTransaction(wallet, raw)
+  const signed = signTransaction(wallet, raw);
 
-// 10. Submit transaction
+  const txHash = cardano.transactionSubmit(signed);
 
-const txHash = cardano.transactionSubmit(signed)
+  console.log(txHash);
+};
 
-console.log(txHash)
+mintAssset("ADAPI", assets);
