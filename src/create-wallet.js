@@ -11,4 +11,5 @@ const createWallet = (account) => {
   return cardano.wallet(account);
 };
 
+// TODO: Provide the name
 createWallet("ADAPI")

@@ -1,3 +1,4 @@
+const fs = require("fs");
 const cardano = require("./cardano");
 
 const hexAssetName = (assetName) =>
@@ -10,60 +11,53 @@ const assetId = (assetName, policyId) =>
   policyId + "." + hexAssetName(assetName);
 
 const makeMetadata = (policyId, assets) => ({
+  // ERC 721 NFT standard
   721: {
-    [policyId]: {
-      ...Object.fromEntries(assets.map((asset) => [asset.name, asset])),
-    },
+    [policyId]: Object.fromEntries(assets.map((asset) => [asset.name, asset])),
   },
 });
 
-const makeTransaction = (wallet, policyId, assets, mintScript, metadata) => {
-  const txOuts = [
-    {
-      address: wallet.paymentAddr,
-      value: {
-        ...wallet.balance().value,
-        ...Object.fromEntries(
-          assets.map((asset) => [assetId(asset.name, policyId), 1])
-        ),
-      },
-    },
-  ];
+// If the asset's destination is ommitted, the wallet's address is assumed
+const assetToTxOut = (wallet, policyId, asset) => ({
+  address: asset.destination || wallet.paymentAddr,
+  value: {
+    lovelace: 0,
+    ...Object.fromEntries([[assetId(asset.name, policyId), asset.quantity]]),
+  },
+});
 
-  const mint = assets.map((asset) => ({
+const makeTxOuts = (wallet, policyId, assets) => [
+  {
+    address: wallet.paymentAddr,
+    // value: wallet.balance().value
+    value: {
+      ...wallet.balance().value,
+      // BUG: The commented out code doesn't work for some reason
+      // ...assets.map((asset) => assetToTxOut(wallet, policyId, asset)),
+      ...Object.fromEntries(
+        assets.map((asset) => [assetId(asset.name, policyId), asset.quantity])
+      ),
+    },
+  },
+];
+
+const makeMint = (policyId, mintScript, assets) =>
+  assets.map((asset) => ({
     action: "mint",
-    quantity: 1,
+    quantity: asset.quantity,
     asset: assetId(asset.name, policyId),
     script: mintScript,
   }));
 
-  return {
-    txIn: wallet.balance().utxo,
-    txOut: txOuts,
-    mint: mint,
-    metadata,
-    witnessCount: 2,
-  };
-};
+const makeTransaction = (wallet, policyId, assets, mintScript, metadata) => ({
+  txIn: wallet.balance().utxo,
+  txOut: makeTxOuts(wallet, policyId, assets),
+  mint: makeMint(policyId, mintScript, assets),
+  metadata,
+  witnessCount: 2,
+});
 
-assets = [
-  {
-    name: "AssetName2",
-    image: "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
-    description: "NFT",
-    type: "image/png",
-    src: "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
-    authors: ["WingRiders"],
-  },
-  {
-    name: "AssetName3",
-    image: "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
-    description: "NFT",
-    type: "image/png",
-    src: "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
-    authors: ["WingRiders"],
-  },
-];
+const assets = JSON.parse(fs.readFileSync("assets.json", "utf8"));
 
 const mintAssset = (walletName, assets) => {
   const wallet = cardano.wallet(walletName);
@@ -78,13 +72,16 @@ const mintAssset = (walletName, assets) => {
   const metadata = makeMetadata(POLICY_ID, assets);
   const tx = makeTransaction(wallet, POLICY_ID, assets, mintScript, metadata);
 
-  // What's that
-  if (
-    Object.keys(tx.txOut[0].value).includes("undefined") ||
-    Object.keys(tx.txIn[0].value.includes("undefinded"))
-  ) {
-    delete tx.txOut[0].value.undefined;
-    delete tx.txIn[0].value.undefined;
+  // Using wallet.balance().utxo puts undefined: NaN into the value
+  for (let i = 0; i < tx.txOut.length; i++) {
+    if (Object.keys(tx.txOut[i].value).includes("undefined")) {
+      delete tx.txOut[i].value.undefined;
+    }
+  }
+  for (let i = 0; i < tx.txIn.length; i++) {
+    if (Object.keys(tx.txIn[i].value).includes("undefined")) {
+      delete tx.txIn[i].value.undefined;
+    }
   }
 
   const buildTransaction = (tx) => {
@@ -99,7 +96,8 @@ const mintAssset = (walletName, assets) => {
     return cardano.transactionBuildRaw({ ...tx, fee });
   };
 
-  console.log(tx);
+  // console.log(tx);
+  // console.log(tx.txOut);
   const raw = buildTransaction(tx);
 
   const signTransaction = (wallet, tx) => {

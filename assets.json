@@ -1,0 +1,20 @@
+[
+  {
+    "name": "AssetName6",
+    "image": "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
+    "description": "Token",
+    "type": "image/png",
+    "src": "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
+    "quantity": 1,
+    "authors": ["WingRiders"]
+  },
+  {
+    "name": "AssetName7",
+    "image": "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
+    "description": "Token",
+    "type": "image/png",
+    "src": "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
+    "quantity": 2,
+    "authors": ["WingRiders"]
+  }
+]
