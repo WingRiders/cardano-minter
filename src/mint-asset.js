@@ -1,5 +1,6 @@
-const fs = require("fs");
-const cardano = require("./cardano");
+import fs from "fs";
+import cardano from "./cardano";
+import { assets, wallet, invalidAfter, mintScript, policyId } from "./config";
 
 const hexAssetName = (assetName) =>
   assetName
@@ -32,8 +33,6 @@ const makeTxOuts = (wallet, policyId, assets) => [
     // value: wallet.balance().value
     value: {
       ...wallet.balance().value,
-      // BUG: The commented out code doesn't work for some reason
-      // ...assets.map((asset) => assetToTxOut(wallet, policyId, asset)),
       ...Object.fromEntries(
         assets.map((asset) => [assetId(asset.name, policyId), asset.quantity])
       ),
@@ -57,20 +56,9 @@ const makeTransaction = (wallet, policyId, assets, mintScript, metadata) => ({
   witnessCount: 2,
 });
 
-const assets = JSON.parse(fs.readFileSync("assets.json", "utf8"));
-
-const mintAssset = (walletName, assets) => {
-  const wallet = cardano.wallet(walletName);
-
-  const mintScript = {
-    keyHash: cardano.addressKeyHash(wallet.name),
-    type: "sig",
-  };
-
-  const POLICY_ID = cardano.transactionPolicyid(mintScript);
-  const ASSET_ID = assetId(assets[0].name, POLICY_ID);
-  const metadata = makeMetadata(POLICY_ID, assets);
-  const tx = makeTransaction(wallet, POLICY_ID, assets, mintScript, metadata);
+const mintAssset = (wallet, assets, invalidAfter, mintScript) => {
+  const metadata = makeMetadata(policyId, assets);
+  const tx = makeTransaction(wallet, policyId, assets, mintScript, metadata);
 
   // Using wallet.balance().utxo puts undefined: NaN into the value
   for (let i = 0; i < tx.txOut.length; i++) {
@@ -114,4 +102,4 @@ const mintAssset = (walletName, assets) => {
   console.log(txHash);
 };
 
-mintAssset("ADAPI", assets);
+mintAssset(wallet, assets, invalidAfter, mintScript);

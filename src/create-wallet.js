@@ -1,4 +1,4 @@
-const cardano = require('./cardano')
+import cardano from "./cardano";
 
 const createWallet = (account) => {
   const payment = cardano.addressKeyGen(account);
@@ -12,4 +12,4 @@ const createWallet = (account) => {
 };
 
 // TODO: Provide the name
-createWallet("ADAPI")
+createWallet("ADAPI");

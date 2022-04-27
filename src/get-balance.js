@@ -1,8 +1,7 @@
-const cardano = require("./cardano")
-const sender = cardano.wallet("ADAPI")
+import cardano from "./cardano";
 
-console.log(sender.name)
-console.log(sender.paymentAddr)
-console.log(
-    sender.balance()
-)
+const sender = cardano.wallet("ADAPI");
+
+console.log(sender.name);
+console.log(sender.paymentAddr);
+console.log(sender.balance());

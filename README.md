@@ -7,6 +7,11 @@
 
 ## Usage
 
+- Install the dependencies
+```bash
+npm install
+```
+
 - Run the node and verify the `CARDANO_NODE_SOCKET_PATH` env variable
 
 - Download the Genesis config file needed for shelly-era
