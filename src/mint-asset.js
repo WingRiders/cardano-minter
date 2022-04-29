@@ -54,17 +54,32 @@ const makeMint = (policyId, mintScript, assets) =>
     script: mintScript,
   }));
 
-const makeTransaction = (wallet, policyId, assets, mintScript, metadata) => ({
+const makeTransaction = (
+  wallet,
+  policyId,
+  assets,
+  mintScript,
+  metadata,
+  invalidAfter
+) => ({
   txIn: wallet.balance().utxo,
   txOut: makeTxOuts(wallet, policyId, assets),
   mint: makeMint(policyId, mintScript, assets),
   metadata,
   witnessCount: 2,
+  invalidAfter,
 });
 
 const mintAssset = (wallet, assets, invalidAfter, mintScript) => {
   const metadata = makeMetadata(policyId, assets);
-  const tx = makeTransaction(wallet, policyId, assets, mintScript, metadata);
+  const tx = makeTransaction(
+    wallet,
+    policyId,
+    assets,
+    mintScript,
+    metadata,
+    invalidAfter
+  );
 
   // Using wallet.balance().utxo puts undefined: NaN into the value
   for (let i = 0; i < tx.txOut.length; i++) {
@@ -116,7 +131,7 @@ makeRoyalty(
   invalidAfter
 );
 // Waiting for the transaction to go through
-await sleep(40000);
+await sleep(20000);
 // console.log("Burning royalty");
 // burnAsset(wallet, mintScript, policyId, assetId("", policyId));
 // await sleep(20000);
