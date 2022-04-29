@@ -6,7 +6,17 @@ import {
   invalidAfter,
   mintScript,
   policyId,
+  royaltyRate,
+  royaltyAddress,
 } from "./config.js";
+import { makeRoyalty } from "./mint-royalty.js";
+import { burnAsset } from "./burn-asset.js";
+
+const sleep = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
 
 const hexAssetName = (assetName) =>
   assetName
@@ -80,8 +90,6 @@ const mintAssset = (wallet, assets, invalidAfter, mintScript) => {
     return cardano.transactionBuildRaw({ ...tx, fee });
   };
 
-  // console.log(tx);
-  // console.log(tx.txOut);
   const raw = buildTransaction(tx);
 
   const signTransaction = (wallet, tx) => {
@@ -98,4 +106,19 @@ const mintAssset = (wallet, assets, invalidAfter, mintScript) => {
   console.log(txHash);
 };
 
+console.log("Minting royalty");
+makeRoyalty(
+  wallet,
+  royaltyRate,
+  royaltyAddress,
+  policyId,
+  mintScript,
+  invalidAfter
+);
+// Waiting for the transaction to go through
+await sleep(40000);
+// console.log("Burning royalty");
+// burnAsset(wallet, mintScript, policyId, assetId("", policyId));
+// await sleep(20000);
+console.log("Minting assets");
 mintAssset(wallet, assets, invalidAfter, mintScript);

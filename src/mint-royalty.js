@@ -20,7 +20,7 @@ const chunkSubstr = (str, size) => {
   return chunks;
 };
 
-const makeRoyalty = (
+export const makeRoyalty = (
   wallet,
   royaltyRate,
   royaltyAddress,
@@ -35,7 +35,6 @@ const makeRoyalty = (
     },
   };
 
-  // That may be obsolete
   const royaltyTx = {
     txIn: wallet.balance().utxo,
     txOut: [
@@ -85,12 +84,3 @@ const makeRoyalty = (
   const royaltyTxHash = cardano.transactionSubmit(signedRoyalty);
   console.log("Royalty hash: " + royaltyTxHash);
 };
-
-makeRoyalty(
-  wallet,
-  royaltyRate,
-  royaltyAddress,
-  policyId,
-  mintScript,
-  invalidAfter
-);

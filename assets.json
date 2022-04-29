@@ -1,20 +1,11 @@
 [
   {
-    "name": "AssetName6",
+    "name": "TestAsset1234",
     "image": "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
-    "description": "Token",
+    "description": "To test the fees",
     "type": "image/png",
     "src": "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
-    "quantity": 1,
-    "authors": ["WingRiders"]
-  },
-  {
-    "name": "AssetName7",
-    "image": "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
-    "description": "Token",
-    "type": "image/png",
-    "src": "ipfs://QmUxRuzTi3UZS33rfqXzbD4Heut7zwtGUhuD7qSv7Qt584",
-    "quantity": 2,
+    "quantity": 10,
     "authors": ["WingRiders"]
   }
 ]
