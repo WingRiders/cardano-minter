@@ -1,4 +1,5 @@
-import cardano from "./cardano";
+import cardano from "./cardano.js";
+import fs from "fs";
 
 export const assets = JSON.parse(fs.readFileSync("assets.json", "utf8"));
 export const wallet = cardano.wallet("ADAPI");
@@ -18,4 +19,4 @@ export const mintScript = {
 };
 export const policyId = cardano.transactionPolicyid(mintScript);
 export const royaltyAddress = wallet.paymentAddr;
-export const royaltyRate = 0.1;
+export const royaltyRate = "0.1";

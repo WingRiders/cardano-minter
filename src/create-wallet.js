@@ -1,4 +1,4 @@
-import cardano from "./cardano";
+import cardano from "./cardano.js";
 
 const createWallet = (account) => {
   const payment = cardano.addressKeyGen(account);

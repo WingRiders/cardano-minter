@@ -1,7 +1,7 @@
 import CardanocliJs from "cardanocli-js";
 import path from "path";
 
-const dir = path.join(__dirname, "..");
+const dir = process.cwd();
 
 const shelleyPath = process.env.CARDANO_MAINNET
   ? path.join(dir, "mainnet-shelley-genesis.json")

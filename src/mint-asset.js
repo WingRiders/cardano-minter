@@ -1,6 +1,12 @@
 import fs from "fs";
-import cardano from "./cardano";
-import { assets, wallet, invalidAfter, mintScript, policyId } from "./config";
+import cardano from "./cardano.js";
+import {
+  assets,
+  wallet,
+  invalidAfter,
+  mintScript,
+  policyId,
+} from "./config.js";
 
 const hexAssetName = (assetName) =>
   assetName
@@ -18,19 +24,9 @@ const makeMetadata = (policyId, assets) => ({
   },
 });
 
-// If the asset's destination is ommitted, the wallet's address is assumed
-const assetToTxOut = (wallet, policyId, asset) => ({
-  address: asset.destination || wallet.paymentAddr,
-  value: {
-    lovelace: 0,
-    ...Object.fromEntries([[assetId(asset.name, policyId), asset.quantity]]),
-  },
-});
-
 const makeTxOuts = (wallet, policyId, assets) => [
   {
     address: wallet.paymentAddr,
-    // value: wallet.balance().value
     value: {
       ...wallet.balance().value,
       ...Object.fromEntries(

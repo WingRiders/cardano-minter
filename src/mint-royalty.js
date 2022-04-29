@@ -1,5 +1,13 @@
-import cardano from "./cardano";
-import { assets, wallet, invalidAfter, mintScript, policyId, royaltyRate, royaltyAddress } from "./config";
+import cardano from "./cardano.js";
+import {
+  assets,
+  wallet,
+  invalidAfter,
+  mintScript,
+  policyId,
+  royaltyRate,
+  royaltyAddress,
+} from "./config.js";
 
 const chunkSubstr = (str, size) => {
   const numChunks = Math.ceil(str.length / size);
@@ -48,6 +56,19 @@ const makeRoyalty = (
     witnessCount: 2,
     invalidAfter,
   };
+
+  // Using wallet.balance().utxo puts undefined: NaN into the value
+  for (let i = 0; i < royaltyTx.txOut.length; i++) {
+    if (Object.keys(royaltyTx.txOut[i].value).includes("undefined")) {
+      delete royaltyTx.txOut[i].value.undefined;
+    }
+  }
+  for (let i = 0; i < royaltyTx.txIn.length; i++) {
+    if (Object.keys(royaltyTx.txIn[i].value).includes("undefined")) {
+      delete royaltyTx.txIn[i].value.undefined;
+    }
+  }
+
   const raw = cardano.transactionBuildRaw(royaltyTx);
   const fee = cardano.transactionCalculateMinFee({
     ...royaltyTx,
@@ -67,7 +88,7 @@ const makeRoyalty = (
 
 makeRoyalty(
   wallet,
-  royaltyRate
+  royaltyRate,
   royaltyAddress,
   policyId,
   mintScript,

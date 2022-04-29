@@ -25,5 +25,6 @@
   "bugs": {
     "url": "https://github.com/armada-alliance/cardano-minter/issues"
   },
-  "homepage": "https://github.com/armada-alliance/cardano-minter#readme"
+  "homepage": "https://github.com/armada-alliance/cardano-minter#readme",
+  "type": "module"
 }
