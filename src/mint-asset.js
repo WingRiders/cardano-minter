@@ -118,7 +118,7 @@ const mintAssset = (wallet, assets, invalidAfter, mintScript) => {
 
   const txHash = cardano.transactionSubmit(signed);
 
-  console.log(txHash);
+  console.log("Minted assets hash:" + txHash);
 };
 
 console.log("Minting royalty");
@@ -132,8 +132,8 @@ makeRoyalty(
 );
 // Waiting for the transaction to go through
 await sleep(60000);
-// console.log("Burning royalty token");
-// burnAsset(wallet, mintScript, policyId, policyId);
-// await sleep(60000);
+console.log("Burning royalty token");
+burnAsset(wallet, mintScript, policyId, policyId);
+await sleep(60000);
 console.log("Minting assets");
 mintAssset(wallet, assets, invalidAfter, mintScript);

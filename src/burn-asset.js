@@ -56,5 +56,5 @@ export const burnAsset = (wallet, mintScript, policyId, assetName) => {
   let signed = signTransaction(wallet, raw, mintScript);
 
   let txHash = cardano.transactionSubmit(signed);
-  console.log(txHash);
+  console.log("Burning hash: " + txHash);
 };
