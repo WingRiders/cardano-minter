@@ -118,7 +118,7 @@ const mintAssset = (wallet, assets, invalidAfter, mintScript) => {
 
   const txHash = cardano.transactionSubmit(signed);
 
-  console.log("Minted assets hash:" + txHash);
+  console.log("Minted assets hash: " + txHash);
 };
 
 console.log("Minting royalty");
