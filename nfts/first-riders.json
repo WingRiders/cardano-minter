@@ -1,28 +1,28 @@
 [
   {
     "name": "Gold First Rider",
-    "image": "ipfs://QmTan4jb8T7z2PHge4J917WE1MYvGWu7sa5Py6Qk32Dwwc",
+    "image": "ipfs://bafybeicn5dra47jlpchobmis7sgulvwzgwk7fe7zv63ygfzsqb547ev7m4",
     "description": "Gold Badge of Honor WingRiders",
     "type": "image/png",
-    "src": "ipfs://QmTan4jb8T7z2PHge4J917WE1MYvGWu7sa5Py6Qk32Dwwc",
+    "src": "ipfs://bafybeicn5dra47jlpchobmis7sgulvwzgwk7fe7zv63ygfzsqb547ev7m4",
     "quantity": 107,
     "authors": ["WingRiders"]
   },
   {
     "name": "Silver First Rider",
-    "image": "ipfs://QmPeytoR2a1BQykbcWCcGC5R4ktJ7QGkpkvgDJffrEJFjW",
+    "image": "ipfs://bafybeiatrxkvmfjvggh42ew334rungaimdssdnpzinbt3gmkpp3ziflfge",
     "description": "Silver Badge of Honor WingRiders",
     "type": "image/png",
-    "src": "ipfs://QmPeytoR2a1BQykbcWCcGC5R4ktJ7QGkpkvgDJffrEJFjW",
+    "src": "ipfs://bafybeiatrxkvmfjvggh42ew334rungaimdssdnpzinbt3gmkpp3ziflfge",
     "quantity": 112,
     "authors": ["WingRiders"]
   },
   {
     "name": "Bronze First Rider",
-    "image": "ipfs://QmW1RhZKzDmofhu19VsBNG2RB87rephkn7nN1gLMBTDTY6",
+    "image": "ipfs://bafybeidr6daa2ernolt4cpsclcptgdcv6z7m2jcmlsrwapigf7h746fj6m",
     "description": "Bronze Badge of Honor WingRiders",
     "type": "image/png",
-    "src": "ipfs://QmW1RhZKzDmofhu19VsBNG2RB87rephkn7nN1gLMBTDTY6",
+    "src": "ipfs://bafybeidr6daa2ernolt4cpsclcptgdcv6z7m2jcmlsrwapigf7h746fj6m",
     "quantity": 1744,
     "authors": ["WingRiders"]
   }

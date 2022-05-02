@@ -131,9 +131,9 @@ makeRoyalty(
   invalidAfter
 );
 // Waiting for the transaction to go through
-await sleep(60000);
+await sleep(900000);
 console.log("Burning royalty token");
 burnAsset(wallet, mintScript, policyId, policyId);
-await sleep(60000);
+await sleep(900000);
 console.log("Minting assets");
 mintAssset(wallet, assets, invalidAfter, mintScript);

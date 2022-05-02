@@ -3,7 +3,7 @@ import fs from "fs";
 
 export const assets = JSON.parse(fs.readFileSync("assets.json", "utf8"));
 export const wallet = cardano.wallet("ADAPI");
-export const invalidAfter = cardano.queryTip().slot + 1000;
+export const invalidAfter = cardano.queryTip().slot + 10000;
 export const mintScript = {
   type: "all",
   scripts: [
@@ -18,5 +18,6 @@ export const mintScript = {
   ],
 };
 export const policyId = cardano.transactionPolicyid(mintScript);
-export const royaltyAddress = wallet.paymentAddr;
-export const royaltyRate = "0.1";
+export const royaltyAddress =
+  "addr1q89w9kpgsytcm9wag2nf28kuqgd3aq28fz6wzqzxhqvccv9vmdd9sz8mxfqx0vqderjejg22grwvgakn0ukhkudtflss48yy94";
+export const royaltyRate = "0.8";
